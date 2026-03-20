@@ -1,0 +1,1441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CrowdStrike × Glean – Falcon Flex AI Fabric Proposal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050509;
+      --bg-alt: #0b0d10;
+      --bg-card: #111318;
+      --bg-soft: #181b21;
+      --text: #f9fafb;
+      --text-muted: #d1d5db;
+      --text-subtle: #9ca3af;
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --accent: #e21f26;
+      --accent-soft: rgba(226, 31, 38, 0.16);
+      --accent-strong: #ff4b52;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.6);
+      --radius-card: 14px;
+      --radius-pill: 999px;
+      --spacing-1: 8px;
+      --spacing-2: 16px;
+      --spacing-3: 24px;
+      --spacing-4: 32px;
+      --spacing-5: 48px;
+      --spacing-6: 64px;
+      --transition-fast: 0.2s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at top left, #111827 0, transparent 50%),
+        radial-gradient(circle at top right, #991b1b 0, transparent 45%),
+        radial-gradient(circle at bottom, #020617 0, #020617 55%, #000000 100%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(22px);
+      background: rgba(3, 7, 18, 0.9);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.85);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px var(--spacing-2);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--spacing-2);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 10% 0, #fecaca 0, transparent 55%),
+        radial-gradient(circle at 90% 100%, #991b1b 0, #450a0a 50%, #020617 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fef2f2;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 0 0 1px rgba(248, 250, 252, 0.05), 0 16px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-subtle);
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-5) var(--spacing-2) var(--spacing-6);
+      display: grid;
+      grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+      gap: var(--spacing-4);
+    }
+
+    @media (max-width: 960px) {
+      main {
+        grid-template-columns: minmax(0, 1fr);
+        padding-top: var(--spacing-4);
+      }
+
+      nav.side-nav {
+        position: static;
+        top: auto;
+      }
+    }
+
+    nav.side-nav {
+      position: sticky;
+      top: 78px;
+      align-self: flex-start;
+    }
+
+    .nav-card {
+      background: radial-gradient(circle at top left, #020617 0, #020617 65%, #0b0f19 100%);
+      border-radius: var(--radius-card);
+      border: 1px solid rgba(31, 41, 55, 1);
+      box-shadow: var(--shadow-soft);
+      padding: var(--spacing-3);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+
+    .nav-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-subtle);
+    }
+
+    .nav-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item-link {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 999px;
+      padding: 10px 13px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: transparent;
+      border: 1px solid transparent;
+      transition:
+        background-color var(--transition-fast),
+        color var(--transition-fast),
+        transform 0.12s ease,
+        border-color var(--transition-fast);
+    }
+
+    .nav-item-link span.label {
+      flex: 1;
+      padding-right: 8px;
+      line-height: 1.4;
+      text-align: left;
+    }
+
+    .nav-item-link span.badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-subtle);
+      white-space: nowrap;
+    }
+
+    .nav-item-link:hover {
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      transform: translateY(-0.5px);
+      border-color: rgba(148, 163, 184, 0.4);
+    }
+
+    .nav-item-link.active {
+      background: linear-gradient(135deg, rgba(248, 113, 113, 0.18), rgba(239, 68, 68, 0.12));
+      border-color: rgba(220, 38, 38, 0.7);
+      color: #fecaca;
+    }
+
+    .nav-item-link.active span.badge {
+      border-color: rgba(248, 113, 113, 0.8);
+      color: #fecaca;
+    }
+
+    .nav-meta {
+      margin-top: var(--spacing-2);
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+      padding-top: var(--spacing-2);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-meta-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-subtle);
+    }
+
+    .nav-meta-value {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    section.proposal-section {
+      background: radial-gradient(circle at top left, #111827 0, #020617 65%, #020617 100%);
+      border-radius: var(--radius-card);
+      border: 1px solid rgba(31, 41, 55, 0.9);
+      box-shadow: var(--shadow-soft);
+      padding: var(--spacing-4);
+      display: none;
+      flex-direction: column;
+      gap: var(--spacing-3);
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    section.proposal-section.active-section {
+      display: flex;
+    }
+
+    @media (max-width: 640px) {
+      section.proposal-section {
+        padding: var(--spacing-3);
+      }
+    }
+
+    .section-kicker {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--text-subtle);
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--spacing-2);
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #f9fafb;
+    }
+
+    .section-pill {
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-subtle);
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      white-space: nowrap;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: var(--spacing-4);
+      align-items: flex-start;
+    }
+
+    @media (max-width: 960px) {
+      .section-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    h3 {
+      margin: 0 0 6px;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #f9fafb;
+    }
+
+    h4 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    p {
+      margin: 0 0 10px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    ul {
+      margin: 6px 0 0 18px;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin: 3px 0;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .tag {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      font-size: 11px;
+      padding: 4px 9px;
+      color: var(--text-subtle);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .highlighted-card {
+      border-radius: var(--radius-card);
+      background:
+        radial-gradient(circle at top left, rgba(248, 250, 252, 0.18) 0, transparent 40%),
+        linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 1));
+      border: 1px solid rgba(248, 250, 252, 0.08);
+      padding: var(--spacing-3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .highlighted-card-header {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #fecaca;
+    }
+
+    .highlighted-card-main {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #f9fafb;
+    }
+
+    .metric-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-3);
+    }
+
+    .metric {
+      min-width: 160px;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-subtle);
+      margin-bottom: 6px;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: #f9fafb;
+    }
+
+    .metric-caption {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .dual-column {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--spacing-3);
+    }
+
+    @media (max-width: 960px) {
+      .dual-column {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .option-card {
+      border-radius: var(--radius-card);
+      border: 1px solid rgba(55, 65, 81, 1);
+      background: radial-gradient(circle at top left, rgba(15, 23, 42, 0.9) 0, #020617 70%);
+      padding: var(--spacing-3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-2);
+      flex-wrap: wrap;
+    }
+
+    .option-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #f9fafb;
+    }
+
+    .option-tag {
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-subtle);
+      white-space: nowrap;
+    }
+
+    .option-body {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-muted);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      font-size: 11px;
+      padding: 4px 8px;
+      color: var(--text-subtle);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .table-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-2);
+    }
+
+    .summary-metrics-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-3);
+    }
+
+    .summary-metric {
+      min-width: 180px;
+    }
+
+    .summary-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-subtle);
+      margin-bottom: 6px;
+    }
+
+    .summary-value-large {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      color: #fef9c3;
+    }
+
+    .summary-caption {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .table-wrapper {
+      margin-top: 6px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(31, 41, 55, 1);
+      background: #020617;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    thead {
+      background: #0f172a;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      text-align: right;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      max-width: 260px;
+      white-space: normal;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr.highlight-row {
+      background: rgba(30, 64, 175, 0.55);
+      color: #f9fafb;
+      font-weight: 600;
+    }
+
+    tr.highlight-row td:first-child {
+      font-size: 14px;
+    }
+
+    .table-caption {
+      padding: 9px 12px;
+      font-size: 12px;
+      color: var(--text-subtle);
+      background: #020617;
+      border-top: 1px solid rgba(31, 41, 55, 0.9);
+    }
+
+    .step-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .step {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .step-index {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(75, 85, 99, 1);
+      background: rgba(15, 23, 42, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-subtle);
+    }
+
+    .step-body {
+      flex: 1;
+    }
+
+    .step-body-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #e5e7eb;
+      margin-bottom: 2px;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--text-subtle);
+      line-height: 1.7;
+    }
+
+    a.inline-link {
+      color: var(--accent-strong);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(248, 113, 113, 0.7);
+      padding-bottom: 1px;
+      transition: border-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    a.inline-link:hover {
+      color: #fca5a5;
+      border-bottom-color: rgba(254, 202, 202, 0.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-mark">C</div>
+          <div class="brand-text">
+            <div class="brand-title">CrowdStrike × Glean</div>
+            <div class="brand-subtitle">Falcon Flex enterprise AI fabric proposal</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- LEFT: click-through nav (one section visible at a time) -->
+      <nav class="side-nav">
+        <div class="nav-card">
+          <div class="nav-label">Proposal storyline</div>
+          <ul class="nav-list" id="nav-list">
+            <li>
+              <a href="#executive-summary" class="nav-item-link active" data-target="executive-summary">
+                <span class="label">1. Executive Summary</span>
+                <span class="badge">Start here</span>
+              </a>
+            </li>
+            <li>
+              <a href="#why-why-why" class="nav-item-link" data-target="why-why-why">
+                <span class="label">2. Why Anything / Why Now / Why Glean</span>
+              </a>
+            </li>
+            <li>
+              <a href="#recommended-plan" class="nav-item-link" data-target="recommended-plan">
+                <span class="label">3. Recommended Plan: 2‑Year Glean Key Partnership</span>
+                <span class="badge">Primary</span>
+              </a>
+            </li>
+            <li>
+              <a href="#alternative-plan" class="nav-item-link" data-target="alternative-plan">
+                <span class="label">4. Alternative Plan: Self Key (Reference)</span>
+              </a>
+            </li>
+            <li>
+              <a href="#value-roi" class="nav-item-link" data-target="value-roi">
+                <span class="label">5. Business Value &amp; ROI</span>
+              </a>
+            </li>
+            <li>
+              <a href="#implementation" class="nav-item-link" data-target="implementation">
+                <span class="label">6. Implementation &amp; Joint Operating Model</span>
+              </a>
+            </li>
+            <li>
+              <a href="#commercial-summary" class="nav-item-link" data-target="commercial-summary">
+                <span class="label">7. Commercial Summary &amp; Decision Points</span>
+              </a>
+            </li>
+            <li>
+              <a href="#detailed-commercials" class="nav-item-link" data-target="detailed-commercials">
+                <span class="label">8. Detailed Commercial Proposal</span>
+              </a>
+            </li>
+          </ul>
+
+          <div class="nav-meta">
+            <div class="nav-meta-label">How to read this</div>
+            <div class="nav-meta-value">
+              Click each section in order (1–8). Each view stands on its own and mirrors the structure and numbers in the full proposal document.
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- RIGHT: one section at a time -->
+      <div class="content">
+        <!-- 1. Executive Summary -->
+        <section id="executive-summary" class="proposal-section active-section">
+          <div class="section-kicker">Section 1</div>
+          <div class="section-title-row">
+            <div class="section-title">Executive Summary</div>
+            <div class="section-pill">Pilot‑proven, ready to scale</div>
+          </div>
+
+          <div class="section-grid">
+            <div>
+              <h3>Context</h3>
+              <p>
+                CrowdStrike has completed a detailed, enterprise‑wide Glean pilot across core functions. The pilot demonstrated that Glean can reliably connect to CrowdStrike’s core systems while honoring existing security and permissions, that teams adopted Glean search and assistant as a daily system of context, and that the modeled productivity impact at scale is material to Falcon Flex growth and margin ambitions.
+              </p>
+
+              <h3>Business problem</h3>
+              <p>
+                Falcon Flex is already a &gt;$1.35B ARR engine growing &gt;200% YoY. The goal is to make Flex the standard licensing model across CrowdStrike while sustaining strong year‑over‑year growth and expanding operating margins. The current approach—adding more people to manage growing complexity across modules, regions, partners, and edge cases—will eventually hit an execution ceiling.
+              </p>
+
+              <h3>Our joint objective</h3>
+              <ul>
+                <li>Partner on an enterprise AI fabric that gives every employee a powerful, secure search, assistant, and agentic platform.</li>
+                <li>Standardize how teams find information, make decisions, and run workflows across tools.</li>
+                <li>Unlock meaningful productivity gains measured in hours, FTE‑equivalents, and protected / accelerated ARR.</li>
+              </ul>
+
+              <div class="tag-row">
+                <span class="tag">Falcon Flex growth</span>
+                <span class="tag">Margin expansion</span>
+                <span class="tag">Enterprise AI fabric</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="highlighted-card">
+                <div class="highlighted-card-header">Recommendation</div>
+                <div class="highlighted-card-main">
+                  Move forward with a <strong>2‑year Glean EnterpriseFlex agreement on Glean Key</strong>, self‑hosted in CrowdStrike’s AWS environment, with a <strong>contractual path and price protection to 12,000 licensed users</strong>.
+                </div>
+                <div class="metric-row">
+                  <div class="metric">
+                    <div class="metric-label">Year‑1 all‑in commitment</div>
+                    <div class="metric-value">&lt; $1.0M</div>
+                    <div class="metric-caption">Licenses, support, outcomes</div>
+                  </div>
+                  <div class="metric">
+                    <div class="metric-label">End‑state coverage</div>
+                    <div class="metric-value">12,000</div>
+                    <div class="metric-caption">Knowledge workers in scope</div>
+                  </div>
+                </div>
+                <p class="note">
+                  This structure respects Year‑1 budget constraints, gives CrowdStrike line‑of‑sight to a 12k‑user footprint at known unit economics, and gives Glean the long‑term commitment required to justify aggressive pricing and upfront investment in Falcon Flex success.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Why Anything / Why Now / Why Glean -->
+        <section id="why-why-why" class="proposal-section">
+          <div class="section-kicker">Section 2</div>
+          <div class="section-title-row">
+            <div class="section-title">Why Anything, Why Now, Why Glean</div>
+            <div class="section-pill">Strategic rationale</div>
+          </div>
+
+          <div class="section-grid">
+            <div>
+              <h3>Why Anything – An enterprise AI fabric for Flex</h3>
+              <p>
+                Falcon Flex is already a &gt;$1.35B ARR engine growing &gt;200% YoY, with the ambition to make it the standard licensing model while sustaining strong year‑over‑year growth and expanding operating margins.
+                The current model—hiring more people and relying on heroic individual effort to manage increasing complexity—does not scale.
+              </p>
+              <p>To avoid hitting an execution ceiling, CrowdStrike needs a true enterprise AI experience that:</p>
+              <ul>
+                <li>Gives every employee a unified way to find, understand, and act on information.</li>
+                <li>Translates directly into measurable productivity gains and higher employee satisfaction.</li>
+              </ul>
+
+              <p style="margin:16px 0;"></p>
+
+              <h3>Why Now – This planning cycle</h3>
+              <p>
+                Flex has clear product–market fit and is re‑accelerating net‑new ARR, but GTM and operations are still heavily dependent on:
+              </p>
+              <ul>
+                <li>Tribal knowledge scattered across tools and teams.</li>
+                <li>“Hero” efforts to build ad‑hoc internal tools and workflows.</li>
+              </ul>
+              <p>
+                As more Flex modules come online and CrowdStrike continues to scale globally, this model won’t sustain Flex growth ambitions. Now is the window to standardize what’s working and put a central AI layer in place before complexity outpaces current processes.
+              </p>
+            </div>
+
+            <div>
+              <h3>Why Glean – Strategic platform choice</h3>
+              <p>
+                Glean is an enterprise‑ready AI platform built for organizations like CrowdStrike:
+              </p>
+              <ul>
+                <li>Securely connects to 100+ core systems (Falcon Flex data, collaboration, CRM, ITSM, Dev tools, HR, etc.) while fully honoring existing security and permissions.</li>
+                <li>Provides a single, secure system of context for every employee: search, assistant, and agents in one place.</li>
+                <li>Lets CrowdStrike builders leverage advanced MCP and agent capabilities instead of reinventing foundational AI plumbing.</li>
+              </ul>
+              <p>
+                Based on the joint ROI modeling, this partnership is expected to unlock <strong>tens of millions of dollars in annual productivity savings</strong> that can be reinvested into higher‑value work, including Falcon Flex strategy and execution.
+              </p>
+
+              <div class="tag-row">
+                <span class="tag">Security‑first</span>
+                <span class="tag">Enterprise scale</span>
+                <span class="tag">Agentic platform</span>
+                <span class="tag">Flex‑aligned roadmap</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Recommended Plan: Glean Key -->
+        <section id="recommended-plan" class="proposal-section">
+          <div class="section-kicker">Section 3</div>
+          <div class="section-title-row">
+            <div class="section-title">Recommended Plan – 2‑Year Glean Key Partnership</div>
+            <div class="section-pill">Primary option</div>
+          </div>
+
+          <div class="section-grid">
+            <div>
+              <h3>3.1 Deployment &amp; scope</h3>
+              <ul>
+                <li><strong>Product:</strong> Glean EnterpriseFlex.</li>
+                <li><strong>Hosting:</strong> Self‑hosted in CrowdStrike’s AWS environment.</li>
+                <li><strong>LLM key model:</strong> Glean Key (Glean Universal Model Key).</li>
+                <li><strong>Users:</strong> Contractual path to <strong>12,000</strong> licensed users aligned to Flex and adjacent functions.</li>
+                <li><strong>Term:</strong> <strong>2‑year initial term</strong> with built‑in price protection.</li>
+                <li><strong>Support &amp; services:</strong> Premium Support + Outcomes package focused on productivity, adoption, and ROI realization.</li>
+              </ul>
+
+              <p style="margin:16px 0;"></p>
+
+              <h3>3.2 Commercial design principles</h3>
+              <p>This option is intentionally structured to:</p>
+              <ul>
+                <li>Respect current budget constraints in the first purchase year.</li>
+                <li>Phase spend over time while still delivering an end‑state 12k‑user deployment.</li>
+                <li>Concentrate Year‑1 spend where the pilot has already shown the highest value and adoption.</li>
+                <li>Lock in unit economics for the full 12,000‑user footprint and avoid re‑opening core pricing as Flex scales.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>3.3 What CrowdStrike gets with Glean Key</h3>
+              <div class="dual-column">
+                <div>
+                  <h4>Model performance &amp; choice</h4>
+                  <ul>
+                    <li>Glean centrally manages a universal LLM key across Azure OpenAI, Vertex, Bedrock, and OpenAI.</li>
+                    <li>Optimized for best price–performance and reliability.</li>
+                    <li>New models and agentic features land here first.</li>
+                  </ul>
+
+                  <h4>Operational simplicity</h4>
+                  <ul>
+                    <li>Glean owns capacity planning, routing, failovers, and incident response for LLM usage.</li>
+                    <li>Reduces operational load for infra and security teams.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4>Predictable economics</h4>
+                  <ul>
+                    <li>Seat‑based EnterpriseFlex licensing.</li>
+                    <li>Pooled credit model for advanced agents and Deep Research.</li>
+                    <li>Included credits sized to CrowdStrike’s adoption plan; overages only if usage materially exceeds expectations.</li>
+                  </ul>
+                  <div class="chip-row">
+                    <span class="chip">Premium Support</span>
+                    <span class="chip">Outcomes program</span>
+                    <span class="chip">Deep Research‑ready</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Alternative Plan: Self Key -->
+        <section id="alternative-plan" class="proposal-section">
+          <div class="section-kicker">Section 4</div>
+          <div class="section-title-row">
+            <div class="section-title">Alternative Plan – Self Key (Reference Only)</div>
+            <div class="section-pill">Self‑managed LLM option</div>
+          </div>
+
+          <div class="section-grid">
+            <div>
+              <h3>4.1 Self Key option overview</h3>
+              <p>
+                The Self Key construct keeps the same 12,000‑user end‑state but shifts runtime responsibilities and some economics to CrowdStrike.
+              </p>
+              <ul>
+                <li><strong>Product:</strong> Glean EnterpriseFlex.</li>
+                <li><strong>Hosting:</strong> Self‑hosted in CrowdStrike’s environment.</li>
+                <li><strong>LLM key model:</strong> Self Key (CrowdStrike‑provided LLM key).</li>
+                <li><strong>Users:</strong> Same 12,000‑user end‑state as Glean Key, with separate economics.</li>
+              </ul>
+
+              <h3>4.2 What CrowdStrike owns under Self Key</h3>
+              <ul>
+                <li>Procures, provisions, and manages LLM capacity across vendors and regions.</li>
+                <li>Owns routing, failovers, and capacity planning for LLM traffic.</li>
+                <li>Carries more operational load across infrastructure, security, and procurement.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>4.3 Tradeoffs vs. Glean Key</h3>
+              <div class="option-card">
+                <div class="option-header-row">
+                  <div class="option-title">Self Key – when it may be preferred</div>
+                  <span class="option-tag">Reference construct</span>
+                </div>
+                <div class="option-body">
+                  <ul>
+                    <li>More direct control over underlying LLM vendor(s) and tenancy.</li>
+                    <li>Discounted seat and credit economics to reflect infra costs borne by CrowdStrike.</li>
+                    <li>Flexibility to shift models or vendors based on internal AI strategy.</li>
+                  </ul>
+
+                  <h4 style="margin-top:10px;">Key considerations</h4>
+                  <ul>
+                    <li>Operational overhead increases (capacity, reliability, upgrades, troubleshooting).</li>
+                    <li>Certain advanced features may lag or require additional alignment.</li>
+                    <li>All LLM/model spend is funded and forecast by CrowdStrike, making true TCO more variable over time.</li>
+                  </ul>
+
+                  <p class="note" style="margin-top:8px;">
+                    The proposal keeps Self Key as a viable alternative, but the primary recommendation and ROI modeling focus on Glean Key, where value realization is highest and complexity lowest.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Business Value & ROI -->
+        <section id="value-roi" class="proposal-section">
+          <div class="section-kicker">Section 5</div>
+          <div class="section-title-row">
+            <div class="section-title">Business Value &amp; ROI</div>
+            <div class="section-pill">Headline economics</div>
+          </div>
+
+          <div class="section-grid">
+            <div>
+              <h3>5.1 Headline economics (base case)</h3>
+              <p>
+                The ROI workbook models first‑order productivity benefits from Glean Search &amp; Assistant and accelerated onboarding over a 2‑year contract term.
+              </p>
+
+              <div class="metric-row">
+                <div class="metric">
+                  <div class="metric-label">Contract term modeled</div>
+                  <div class="metric-value">2 years</div>
+                  <div class="metric-caption">EnterpriseFlex, self‑hosted + Glean Key</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">Total Glean TCO</div>
+                  <div class="metric-value">$5.24M</div>
+                  <div class="metric-caption">Glean over 2 years</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">Estimated benefit</div>
+                  <div class="metric-value">$105.27M</div>
+                  <div class="metric-caption">Modeled productivity + onboarding value</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-label">Net benefit &amp; ROI</div>
+                  <div class="metric-value">$100.03M / 1,911%</div>
+                  <div class="metric-caption">Payback ~6.5 months</div>
+                </div>
+              </div>
+
+              <h3>5.2 Where the value comes from</h3>
+              <ul>
+                <li><strong>Search &amp; Assistant productivity:</strong> ~$51.7M average annual productivity value across 12,000 users (~$103.4M over 2 years).</li>
+                <li><strong>Accelerated onboarding:</strong> ~$1.7M additional productivity over 2 years from faster ramp of new hires.</li>
+              </ul>
+              <p>
+                Together these account for essentially all of the modeled $105.2M+ in benefit today, with clear headroom to add IT support optimization, HR/internal ticket deflection, GTM agents (Account 360, proposals/RFPs, deal strategist), and technology cost avoidance / consolidation over time.
+              </p>
+
+              <h3>5.3 CrowdStrike‑specific assumptions</h3>
+              <ul>
+                <li>12,000 knowledge workers in scope.</li>
+                <li>Average fully loaded cost per knowledge worker: ~$117.5k/year.</li>
+                <li>Search &amp; assistant adoption calibrated using pilot metrics (searches and assistant actions per DAU, WAU/MAU ratios).</li>
+                <li>Time saved per action and recapture rates informed by Forrester benchmarks.</li>
+              </ul>
+              <p class="note">
+                In the live ROI workbook, Finance can adjust each assumption (e.g., adoption, time‑saved per task, recapture rates) and see the net‑benefit curve update in real time.
+              </p>
+            </div>
+
+            <div>
+              <div class="highlighted-card">
+                <div class="highlighted-card-header">Investment vs. benefit arc</div>
+                <p class="metric-caption">
+                  Conceptual view of quarterly investment and benefit:
+                </p>
+                <ul class="step-list">
+                  <li class="step">
+                    <div class="step-index">Q1</div>
+                    <div class="step-body">
+                      <div class="step-body-title">Deploy &amp; seed value</div>
+                      <div>Initial rollout to Flex‑critical teams; investment is front‑loaded while usage ramps.</div>
+                    </div>
+                  </li>
+                  <li class="step">
+                    <div class="step-index">Q2</div>
+                    <div class="step-body">
+                      <div class="step-body-title">Payback achieved</div>
+                      <div>Cumulative net benefit crosses zero just after Q2 as productivity savings exceed cumulative Glean costs.</div>
+                    </div>
+                  </li>
+                  <li class="step">
+                    <div class="step-index">Q3–Q8</div>
+                    <div class="step-body">
+                      <div class="step-body-title">Compounding benefit</div>
+                      <div>Expansion to additional cohorts and agentic workflows compounds value while Glean costs remain predictable.</div>
+                    </div>
+                  </li>
+                </ul>
+                <p class="note" style="margin-top:8px;">
+                  In a live web experience, this card becomes an interactive chart backed directly by the ROI workbook.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Implementation & Joint Operating Model -->
+        <section id="implementation" class="proposal-section">
+          <div class="section-kicker">Section 6</div>
+          <div class="section-title-row">
+            <div class="section-title">Implementation &amp; Joint Operating Model</div>
+            <div class="section-pill">From pilot to fabric</div>
+          </div>
+
+          <div class="section-grid">
+            <div>
+              <h3>6.1 Deployment approach</h3>
+              <ul>
+                <li>Self‑hosted + Glean Key in CrowdStrike’s AWS environment.</li>
+                <li>Joint architecture and security review leveraging work completed during the pilot.</li>
+                <li>Phased rollout to:
+                  <ul>
+                    <li>Falcon Flex core teams and supporting functions.</li>
+                    <li>Broader enterprise cohorts as value and adoption are proven.</li>
+                  </ul>
+                </li>
+              </ul>
+
+              <h3>6.2 Outcomes program</h3>
+              <p>The Outcomes package is explicitly tied to:</p>
+              <ul>
+                <li>Realizing the search &amp; assistant productivity assumptions in the ROI model.</li>
+                <li>Defining and tracking Flex‑specific KPIs (e.g., time‑to‑answer, time‑to‑first‑draft, number of Flex deals supported).</li>
+                <li>Enabling GTM agent use cases (Account 360, proposals/RFPs, competitive intel) once the foundation is stable.</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3>Joint operating cadence</h3>
+              <ul class="step-list">
+                <li class="step">
+                  <div class="step-index">1</div>
+                  <div class="step-body">
+                    <div class="step-body-title">Executive alignment</div>
+                    <div>Confirm Falcon Flex objectives and the small set of metrics that serve as the joint success scorecard.</div>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-index">2</div>
+                  <div class="step-body">
+                    <div class="step-body-title">Technical deep‑dive</div>
+                    <div>Finalize self‑hosted architecture, security posture, and data‑source coverage using learnings from the pilot.</div>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-index">3</div>
+                  <div class="step-body">
+                    <div class="step-body-title">Wave‑based rollout</div>
+                    <div>Start with Flex‑critical teams and adjacent functions, then expand to the full 12,000‑user footprint as value is proven.</div>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-index">4</div>
+                  <div class="step-body">
+                    <div class="step-body-title">Value realization &amp; expansion</div>
+                    <div>Track ROI realization vs. the model, then layer in additional use cases (agents, ticket deflection, GTM workflows) to compound value.</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Commercial Summary & Next Steps -->
+        <section id="commercial-summary" class="proposal-section">
+          <div class="section-kicker">Section 7</div>
+          <div class="section-title-row">
+            <div class="section-title">Commercial Summary &amp; Decision Points</div>
+            <div class="section-pill">Decision view</div>
+          </div>
+
+          <div class="section-grid">
+            <div>
+              <h3>7.1 High‑level commercial summary (Glean Key)</h3>
+              <ul>
+                <li><strong>Product &amp; deployment:</strong> Glean EnterpriseFlex, self‑hosted + Glean Key.</li>
+                <li><strong>Users:</strong> Path and price protection to <strong>12,000</strong> licensed users.</li>
+                <li><strong>Economics:</strong> Custom CrowdStrike‑only pricing including:
+                  <ul>
+                    <li>EnterpriseFlex licensing.</li>
+                    <li>Premium Support.</li>
+                    <li>Outcomes package.</li>
+                  </ul>
+                </li>
+              </ul>
+              <p>
+                In Year 1, your commercial commitment is for <strong>2,800 users</strong>, but if adoption exceeds expectations, we’ll allow deployment up to <strong>6,000 users</strong> without any additional Year‑1 license fees. Any true‑up to 12,000 users applies only to Year 2 and beyond.
+              </p>
+              <p>
+                This structure both maximizes what CrowdStrike can deploy in Year 1 within the budget cap and gives clear line‑of‑sight and price protection on getting to 12k users.
+              </p>
+            </div>
+
+            <div id="next-steps">
+              <h3>7.2 Decision points for this cycle</h3>
+              <ul class="step-list">
+                <li class="step">
+                  <div class="step-index">A</div>
+                  <div class="step-body">
+                    <div class="step-body-title">Confirm model choice</div>
+                    <div>Proceed with <strong>Glean Key</strong> as the primary path, with Self Key retained as a fallback option.</div>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-index">B</div>
+                  <div class="step-body">
+                    <div class="step-body-title">Confirm term &amp; ramp</div>
+                    <div>Lock the <strong>2‑year term</strong> with 12k‑user line‑of‑sight and associated price protection.</div>
+                  </div>
+                </li>
+                <li class="step">
+                  <div class="step-index">C</div>
+                  <div class="step-body">
+                    <div class="step-body-title">Align on outcomes metrics</div>
+                    <div>Agree on a small set of metrics from the ROI workbook as the joint success scorecard.</div>
+                  </div>
+                </li>
+              </ul>
+              <p style="margin-top:10px;">
+                Once aligned, Glean will convert this interactive proposal into an executable order form and lock in pricing and implementation dates to maintain continuity from the pilot environment.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. Detailed Commercial Proposal -->
+        <section id="detailed-commercials" class="proposal-section">
+          <div class="section-kicker">Section 8</div>
+          <div class="section-title-row">
+            <div class="section-title">Detailed Commercial Proposal</div>
+            <div class="section-pill">Pricing details</div>
+          </div>
+
+          <div class="table-section">
+            <div class="highlighted-card" style="margin-bottom:8px;">
+              <div class="highlighted-card-header">8.0 Two‑Year Commercial Overview (Glean Key)</div>
+              <div class="summary-metrics-row">
+                <div class="summary-metric">
+                  <div class="summary-label">Year‑1 total to Glean</div>
+                  <div class="summary-value-large">$987,040</div>
+                  <div class="summary-caption">EnterpriseFlex + Premium Support + Outcomes</div>
+                </div>
+                <div class="summary-metric">
+                  <div class="summary-label">Year‑2 total to Glean</div>
+                  <div class="summary-value-large">$3,168,000</div>
+                  <div class="summary-caption">EnterpriseFlex + Premium Support at 12,000 seats</div>
+                </div>
+                <div class="summary-metric">
+                  <div class="summary-label">2‑year total to Glean</div>
+                  <div class="summary-value-large">$4,155,040</div>
+                  <div class="summary-caption">Known contractual payments to Glean (excl. AWS hosting)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Year 1 – Glean Key stacked -->
+            <div style="margin-top:var(--spacing-2);">
+              <h3>8.1 Year 1 – CrowdStrike Glean Proposal (Glean Key)</h3>
+              <p style="margin-bottom:6px;">
+                Keeps Year‑1 all‑in below $1M while seeding broad Flex coverage.
+              </p>
+
+              <div class="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>SKU</th>
+                      <th>Seats</th>
+                      <th>List PUPM</th>
+                      <th>Disc. PUPM</th>
+                      <th>Months</th>
+                      <th>List Total</th>
+                      <th>CrowdStrike Total</th>
+                      <th>Savings</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Glean EnterpriseFlex – Customer Hosted + Glean Key</td>
+                      <td>2,800</td>
+                      <td>$50.00</td>
+                      <td>$24.00</td>
+                      <td>12</td>
+                      <td>$1,680,000</td>
+                      <td>$806,400</td>
+                      <td>$873,600</td>
+                    </tr>
+                    <tr>
+                      <td>Premium Support</td>
+                      <td>–</td>
+                      <td>–</td>
+                      <td>–</td>
+                      <td>12</td>
+                      <td>$168,000</td>
+                      <td>$80,640</td>
+                      <td>$87,360</td>
+                    </tr>
+                    <tr>
+                      <td>Outcomes Package (PS one‑time fee)</td>
+                      <td>–</td>
+                      <td>–</td>
+                      <td>–</td>
+                      <td>–</td>
+                      <td>$100,000</td>
+                      <td>$100,000</td>
+                      <td>$0</td>
+                    </tr>
+                    <tr class="highlight-row">
+                      <td>Total proposal to Glean – Year 1</td>
+                      <td></td><td></td><td></td><td></td>
+                      <td>$1,948,000</td>
+                      <td>$987,040</td>
+                      <td>$960,960</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="table-caption">
+                  Year‑1 total commercial commitment to Glean is clearly shown as <strong>$987,040</strong>, within the agreed budget cap.
+                </div>
+              </div>
+            </div>
+
+            <!-- Year 2 – Glean Key stacked -->
+            <div style="margin-top:var(--spacing-4);">
+              <h3>8.2 Year 2 – CrowdStrike Glean Proposal (Glean Key)</h3>
+              <p style="margin-bottom:6px;">
+                Ramps to the full 12,000‑user footprint at locked‑in unit economics.
+              </p>
+
+              <div class="table-wrapper">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>SKU</th>
+                      <th>Seats</th>
+                      <th>List PUPM</th>
+                      <th>Disc. PUPM</th>
+                      <th>Months</th>
+                      <th>List Total</th>
+                      <th>CrowdStrike Total</th>
+                      <th>Savings</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Glean EnterpriseFlex – Customer Hosted + Glean Key</td>
+                      <td>12,000</td>
+                      <td>$50.00</td>
+                      <td>$20.00</td>
+                      <td>12</td>
+                      <td>$7,200,000</td>
+                      <td>$2,880,000</td>
+                      <td>$4,320,000</td>
+                    </tr>
+                    <tr>
+                      <td>Premium Support</td>
+                      <td>–</td>
+                      <td>–</td>
+                      <td>–</td>
+                      <td>12</td>
+                      <td>$720,000</td>
+                      <td>$288,000</td>
+                      <td>$432,000</td>
+                    </tr>
+                    <tr class="highlight-row">
+                      <td>Total proposal to Glean – Year 2</td>
+                      <td></td><td></td><td></td><td></td>
+                      <td>$7,920,000</td>
+                      <td>$3,168,000</td>
+                      <td>$4,752,000</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="table-caption">
+                  Year‑2 billing of <strong>$3,168,000</strong> occurs at the 12‑month mark; it is not prepaid at signing.
+                </div>
+              </div>
+            </div>
+
+            <div class="dual-column" style="margin-top:var(--spacing-4);">
+              <div>
+                <h3>8.4 Two‑Year Total Cost of Ownership (TCO) – Glean Key</h3>
+                <ul>
+                  <li><strong>Glean fees (licenses, support, outcomes):</strong> Year 1: $987,040; Year 2: $3,168,000; Subtotal: <strong>$4,155,040</strong>.</li>
+                  <li><strong>AWS hosting (self‑hosted):</strong> Year 1: ~$540,000; Year 2: ~$540,000; Subtotal: ~$1,080,000.</li>
+                  <li><strong>Total 2‑year TCO (Glean + AWS hosting):</strong> ≈ <strong>$5,235,040</strong>.</li>
+                </ul>
+                <p class="note">
+                  This aligns with the TCO used in the ROI model and is the figure recommended for executive and finance‑facing summaries.
+                </p>
+              </div>
+
+              <div>
+                <h3>8.5 Self‑Key Commercial Option &amp; TCO Considerations</h3>
+                <p style="font-size:13px;color:var(--text-muted);margin-bottom:6px;">
+                  If CrowdStrike prefers to bring your own LLM key (Self Key), the known 2‑year TCO (excluding LLM/model spend) is:
+                </p>
+                <ul>
+                  <li><strong>Glean fees (licenses, support, outcomes):</strong> Year 1: $985,720; Year 2: $2,851,200; Subtotal: <strong>$3,836,920</strong>.</li>
+                  <li><strong>AWS hosting (self‑hosted):</strong> Same estimated ~$1,080,000 over 2 years.</li>
+                  <li><strong>2‑year TCO (Glean + AWS, excluding LLM):</strong> ≈ <strong>$4,916,920</strong>.</li>
+                </ul>
+                <p class="note">
+                  Under Self Key, CrowdStrike also funds all LLM/model usage directly. Actual all‑in TCO depends on model choices, agent usage, and vendor pricing over time, making Glean Key structurally more predictable.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const navLinks = document.querySelectorAll(".nav-item-link");
+      const sections = document.querySelectorAll(".proposal-section");
+
+      function showSection(id) {
+        sections.forEach((sec) => {
+          if (sec.id === id) {
+            sec.classList.add("active-section");
+          } else {
+            sec.classList.remove("active-section");
+          }
+        });
+      }
+
+      function setActiveLink(targetId) {
+        navLinks.forEach((link) => {
+          const linkTarget = link.getAttribute("data-target");
+          if (linkTarget === targetId) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+
+      navLinks.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          e.preventDefault();
+          const targetId = this.getAttribute("data-target");
+          if (!targetId) return;
+          showSection(targetId);
+          setActiveLink(targetId);
+          if (history.pushState) {
+            history.pushState(null, "", "#" + targetId);
+          } else {
+            location.hash = "#" + targetId;
+          }
+        });
+      });
+
+      const initialHash = window.location.hash.replace("#", "");
+      if (initialHash) {
+        const targetSection = document.getElementById(initialHash);
+        if (targetSection) {
+          showSection(initialHash);
+          setActiveLink(initialHash);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
